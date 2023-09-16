@@ -49,6 +49,11 @@
 #include <wx/stdpaths.h>
 #include <wx/thread.h>
 #include <wx/utils.h>
+#include <wx/msgdlg.h>
+#include <wx/arrstr.h>
+#include <wx/vector.h>
+#include <wx/dataobj.h>
+#include <wx/list.h>
 
 #ifdef __WXOSX__
 #define SHIPDRIVER_DLG_STYLE                                                   \
@@ -60,13 +65,6 @@
 using namespace std;
 
 class ShipDriver_pi;
-// class rte_table;
-
-// lass rtept;
-
-// ----------------------------------------------------------------------------
-// a simple thread
-// ----------------------------------------------------------------------------
 
 class rtept {
 public:
@@ -178,7 +176,8 @@ private:
 
     vector<rte> my_routes;
     vector<rtept> routePoints;
-
+	unique_ptr<PlugIn_Route_Ex> thisRoute;
+	vector<PlugIn_Waypoint_Ex*> theWaypoints;
     int nextRoutePointIndex;
     double nextRoutePoint;
     double followDir;
@@ -240,6 +239,7 @@ private:
     bool m_bCANCEL;
     bool m_bDISTRESSRELAY;
     bool m_bRELAYCANCEL;
+	bool m_bCOLLISION;
 
 
     wxString SARTid;
@@ -261,6 +261,7 @@ private:
     wxString myNMEA_CANCEL;
     wxString myNMEA_DISTRESSRELAY;
     wxString myNMEA_RELAYCANCEL;
+	wxString myNMEA_Collision;
 
 
     int stop_count;
@@ -270,6 +271,7 @@ private:
     int stop_countCANCEL;
     int stop_countDISTRESSRELAY;
     int stop_countRELAYCANCEL;
+	int stop_countCOLLISION;
 
     double m_latSART;
     double m_lonSART;
@@ -277,6 +279,9 @@ private:
     double m_lonMOB;
     double m_latEPIRB;
     double m_lonEPIRB;
+	double m_latCollision;
+    double m_lonCollision;
+	double m_collisionDir;
 
     void OnSART(wxCommandEvent& event);
     void OnMOB(wxCommandEvent& event);
@@ -285,6 +290,9 @@ private:
     void OnDistressCancel(wxCommandEvent& event);
     void OnDistressRelay(wxCommandEvent& event);
     void OnRelayCancel(wxCommandEvent& event);
+	void OnCollision(wxCommandEvent& event);
+	void OnPause(wxCommandEvent& event);
+	void ResetPauseButton();
 
     long m_iMMSI;
 
@@ -309,6 +317,8 @@ private:
     bool m_bInvalidPolarsFile;
     bool m_bInvalidGribFile;
     bool m_bShipDriverHasStarted;
+
+	Plugin_WaypointExList* myList;
 };
 
 class GetRouteDialog : public wxDialog {
@@ -319,10 +329,8 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE);
 
     wxListView* dialogText;
-    wxString GetText();
 
 private:
-    void OnOk(wxCommandEvent& event);
 };
 
 #endif

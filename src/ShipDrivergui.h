@@ -23,8 +23,8 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/stattext.h>
 #include <wx/tglbtn.h>
+#include <wx/stattext.h>
 #include <wx/statbox.h>
 #include <wx/timer.h>
 #include <wx/dialog.h>
@@ -46,6 +46,7 @@ class ShipDriverBase : public wxDialog
 		wxTextCtrl* m_textCtrlRudderStbd;
 		wxButton* m_bpPlay;
 		wxButton* m_bpStop;
+		wxToggleButton* m_buttonPause;
 		wxStaticText* m_staticTextHeading;
 		wxStaticText* m_staticTextKnots;
 		wxStaticText* m_staticText81;
@@ -66,12 +67,14 @@ class ShipDriverBase : public wxDialog
 		wxToggleButton* m_buttonDistressCancel;
 		wxToggleButton* m_buttonDistressRelay;
 		wxToggleButton* m_buttonRelayCancel;
+		wxToggleButton* m_buttonCollision;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
 		virtual void OnMidships( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnStart( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnStop( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnPause( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnStandby( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAuto( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnFollow( wxCommandEvent& event ) { event.Skip(); }
@@ -87,6 +90,7 @@ class ShipDriverBase : public wxDialog
 		virtual void OnDistressCancel( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDistressRelay( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnRelayCancel( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCollision( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTimer( wxTimerEvent& event ) { event.Skip(); }
 
 

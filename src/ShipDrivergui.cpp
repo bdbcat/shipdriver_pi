@@ -106,7 +106,17 @@ ShipDriverBase::ShipDriverBase( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer16->Add( m_bpStop, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
 
-	bSizer16->Add( 0, 0, 1, wxEXPAND, 5 );
+	bSizer16->Add( 25, 0, 0, wxEXPAND, 5 );
+
+	m_buttonPause = new wxToggleButton( this, wxID_ANY, _("Pause"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonPause->SetFont( wxFont( 12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial") ) );
+	m_buttonPause->SetBackgroundColour( wxColour( 0, 255, 0 ) );
+	m_buttonPause->SetToolTip( _("MOB") );
+
+	bSizer16->Add( m_buttonPause, 0, wxALL, 5 );
+
+
+	bSizer16->Add( 0, 0, 0, wxEXPAND, 5 );
 
 
 	bSizer6->Add( bSizer16, 1, wxEXPAND, 5 );
@@ -129,17 +139,17 @@ ShipDriverBase::ShipDriverBase( wxWindow* parent, wxWindowID id, const wxString&
 
 	bSizer7->Add( m_stHeading, 0, wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_staticTextKnots = new wxStaticText( this, wxID_ANY, _("             Speed: "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextKnots = new wxStaticText( this, wxID_ANY, _("       Speed: "), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextKnots->Wrap( -1 );
 	m_staticTextKnots->SetFont( wxFont( 12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial") ) );
 
 	bSizer7->Add( m_staticTextKnots, 0, wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_stSpeed = new wxStaticText( this, wxID_ANY, _("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stSpeed = new wxStaticText( this, wxID_ANY, _("00.0"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stSpeed->Wrap( -1 );
 	m_stSpeed->SetFont( wxFont( 12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial") ) );
 
-	bSizer7->Add( m_stSpeed, 0, wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer7->Add( m_stSpeed, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_staticText81 = new wxStaticText( this, wxID_ANY, _("        Kts"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText81->Wrap( -1 );
@@ -328,6 +338,19 @@ ShipDriverBase::ShipDriverBase( wxWindow* parent, wxWindowID id, const wxString&
 
 	sbSizer3->Add( fgSizer5, 1, wxEXPAND, 5 );
 
+	wxBoxSizer* bSizer111;
+	bSizer111 = new wxBoxSizer( wxVERTICAL );
+
+	m_buttonCollision = new wxToggleButton( sbSizer3->GetStaticBox(), wxID_ANY, _("AIS Collision Warning"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCollision->SetFont( wxFont( 12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial") ) );
+	m_buttonCollision->SetBackgroundColour( wxColour( 0, 255, 0 ) );
+	m_buttonCollision->SetToolTip( _("MOB") );
+
+	bSizer111->Add( m_buttonCollision, 0, wxALIGN_CENTER|wxALL, 5 );
+
+
+	sbSizer3->Add( bSizer111, 0, wxEXPAND, 5 );
+
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 
@@ -353,6 +376,7 @@ ShipDriverBase::ShipDriverBase( wxWindow* parent, wxWindowID id, const wxString&
 	m_buttonMid->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnMidships ), NULL, this );
 	m_bpPlay->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnStart ), NULL, this );
 	m_bpStop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnStop ), NULL, this );
+	m_buttonPause->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnPause ), NULL, this );
 	m_buttonStandby->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnStandby ), NULL, this );
 	m_buttonAuto->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnAuto ), NULL, this );
 	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnFollow ), NULL, this );
@@ -368,6 +392,7 @@ ShipDriverBase::ShipDriverBase( wxWindow* parent, wxWindowID id, const wxString&
 	m_buttonDistressCancel->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnDistressCancel ), NULL, this );
 	m_buttonDistressRelay->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnDistressRelay ), NULL, this );
 	m_buttonRelayCancel->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnRelayCancel ), NULL, this );
+	m_buttonCollision->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnCollision ), NULL, this );
 	this->Connect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( ShipDriverBase::OnTimer ) );
 }
 
@@ -378,6 +403,7 @@ ShipDriverBase::~ShipDriverBase()
 	m_buttonMid->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnMidships ), NULL, this );
 	m_bpPlay->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnStart ), NULL, this );
 	m_bpStop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnStop ), NULL, this );
+	m_buttonPause->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnPause ), NULL, this );
 	m_buttonStandby->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnStandby ), NULL, this );
 	m_buttonAuto->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnAuto ), NULL, this );
 	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnFollow ), NULL, this );
@@ -393,6 +419,7 @@ ShipDriverBase::~ShipDriverBase()
 	m_buttonDistressCancel->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnDistressCancel ), NULL, this );
 	m_buttonDistressRelay->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnDistressRelay ), NULL, this );
 	m_buttonRelayCancel->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnRelayCancel ), NULL, this );
+	m_buttonCollision->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( ShipDriverBase::OnCollision ), NULL, this );
 	this->Disconnect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( ShipDriverBase::OnTimer ) );
 
 }
